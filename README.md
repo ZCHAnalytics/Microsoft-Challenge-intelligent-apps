@@ -35,10 +35,16 @@ We need to create yaml files to deploy to Kubernetes
 Get the CosmosDB database connection string: `az cosmosdb keys list --type connection-strings -g $RESOURCE_GROUP -n $COSMOSDB_ACCOUNT_NAME --query "connectionStrings[0].connectionString" -o tsv`. Then, we add this connection string to the newly created yaml file called `backend-deploy.yaml`. I used vim editor for the task but any other editor can do the same job and then deploy `kubectl apply -f backend-deploy.yml`. Output looks like this:
 
 ![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/50da3aba-5a0c-4285-9495-e91634af6931)
-### Make the application available
-We need to create a service and an ingress to take care of the traffic. First, we get the cluster API server address using `az aks show -g $RESOURCE_GROUP -n $AKS_CLUSTER_NAME -o tsv --query fqdn` command and then add it to another newly created yaml file called `backend-network.yml`.
-![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/8f56b15a-7aba-4a51-bb83-1603174b94ce)
 
+### Make the application available
+We need to create a service and an ingress to take care of the traffic. First, we get the cluster API server address using `az aks show -g $RESOURCE_GROUP -n $AKS_CLUSTER_NAME -o tsv --query fqdn` command and then add it to another newly created yaml file called `backend-network.yml` and then deploy with `kubectl apply -f backend-network.yml`: 
+
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/8fb4bc5a-c031-4b89-b105-6ef783e84769)
+
+Now the API can be accessed through the host name that was pasted in the ingress resource (The Azure DNS zone resource can take up to five minutes to complete the DNS detection): 
+
+Check the ingress status by querying Kubernetes for the available ingresses using the `kubectl get ingress` command.
+Output: 
 
 ## Work with Cosmos DB
 
