@@ -77,6 +77,14 @@ And now I can clean up the resources:
 
 ## Work with Cosmos DB
 
+In Azure portal, create a Cosmos DB for NoSQL account (named solarisdb2024), serverless. Add database called ToDoList and a container called Items via Data Explorer. 
+
+We then add data:
+
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/9d172fa6-231a-4d29-9724-58a665076823)
+
+and clean up after exercise/
+
 ## Monitor GitHub events by using a webhook with Azure Functions
 
 ## AKS deployment pipeline with GitHub Actions
