@@ -72,6 +72,8 @@ ingress.networking.k8s.io/ship-manager-frontend created
 
 ![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/6207140b-8f8f-4300-83f6-c1b1190c989d)
 
+And now I can clean up the resources:
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/5b7ee731-a1c3-448d-88a6-dfffc60100e9)
 
 ## Work with Cosmos DB
 
