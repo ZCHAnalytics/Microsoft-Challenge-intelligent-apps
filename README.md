@@ -44,7 +44,34 @@ We need to create a service and an ingress to take care of the traffic. First, w
 Now the API can be accessed through the host name that was pasted in the ingress resource (The Azure DNS zone resource can take up to five minutes to complete the DNS detection): 
 
 Check the ingress status by querying Kubernetes for the available ingresses using the `kubectl get ingress` command.
-Output: 
+Output: no address.
+
+NAME                   CLASS                                HOSTS                                                              ADDRESS   PORTS   AGE
+ship-manager-backend   webapprouting.kubernetes.azure.com   ship-manag-rg-ship-manager-9e04f9-gjfu5q0a.hcp.uksouth.azmk8s.io             80      68m
+
+This seems to be a common problem as Kubernetes needs to know the class of ingress controller. There are many various suggestions on stackoverflow and Kubernetes website  but the one from azure GitHub did the trick :  https://azure.github.io/Cloud-Native/cnny-2023/fundamentals-day-2/
+
+Enable the web application routing add-on in our AKS cluster with the following command:
+`az aks addon enable --name <YOUR_AKS_NAME> --resource-group <YOUR_AKS_RESOURCE_GROUP> --addon web_application_routing`
+
+Took me 178 minutes to find a simple solution:
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/d4dd72bd-8c98-42d9-a4a1-f9ca11a5d6ff)
+
+#### Deploy the front-end interface
+
+zulfia [ ~ ]$ vim frontend-deploy.yml 
+zulfia [ ~ ]$ kubectl apply -f frontend-deploy.yml
+deployment.apps/ship-manager-frontend created
+configmap/frontend-config created
+zulfia [ ~ ]$ vim frontend-network.yml
+zulfia [ ~ ]$ kubectl apply -f frontend-network.yml
+service/ship-manager-frontend created
+ingress.networking.k8s.io/ship-manager-frontend created
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/18b41f54-e961-45d3-b83a-2fd142f947f8)
+
+
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/6207140b-8f8f-4300-83f6-c1b1190c989d)
+
 
 ## Work with Cosmos DB
 
