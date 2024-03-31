@@ -7,8 +7,37 @@ In this unit, you design a CI/CD pipeline to support the needs of your project. 
 You also want to deploy the website to a staging environment for testing after every push to the main branch, regardless of whether the push is tagged for release to production. You can use tags for routing different container images when you push them to Azure Container Registry.
 Triggers
 Your pipeline needs to trigger on two different events:
-
-A tagged push to the main branch.
-A nontagged push to the main branch.
+- A tagged push to the main branch.
+- A nontagged push to the main branch.
 You split the two events into two separate triggers, because the actions for a tagged push are different from the actions for a nontagged push. A tagged push deploys to production, while a nontagged push deploys to the staging environment. The following diagram shows the two triggers for the pipeline:
+Step 1: Clone the repo
+The first steps are the build steps, where you prepare a configuration and build the image before you push it to the AKS cluster. In the build steps, you set up all the information needed for the deploy step. In this case, the first build step after receiving the trigger signal is the same for both triggers, to clone the repository.
 
+Step 2: Build the image
+In order to run in the AKS environment, the website must be a Docker image. 
+the Dockerfile that's in the root of the repository. For the tagged commit pipeline, you build the image and then tag it by using the same tag as the push. 
+e.g. if the commit is tagged with v1.0.0, you build the image as contoso/website:v1.0.0. 
+If you have a nontagged commit in the main branch, you build the image with the latest tag.
+Step 3: Push the image to a container registry
+After the image is built, you push it to the Contoso container registry, and you set up the AKS cluster to access the registry. The cluster downloads the images from Container Registry and runs them.
+
+At this point, the pipeline converges into a single step. Your Container Registry instance doesn't have internal divisions, so you push both images to the same place.
+Step 4: Deploy the application
+The final deploy step deploys the website to the correct location. If a tagged commit triggered the pipeline, you deploy the website to the production namespace of the AKS cluster. If the pipeline was triggered with a nontagged commit, you push to the staging namespace of the same cluster.
+
+https://learn.microsoft.com/en-gb/training/modules/aks-deployment-pipeline-github-actions/media/3-pipeline-5-deploy.png
+
+### Fork repo and clone in Azure portal:
+git clone https://github.com/zchanalytics/aks-deployment-pipeline-github-actions
+
+zulfia [ ~ ]$ cd aks-deployment-pipeline-github-actions
+zulfia [ ~/aks-deployment-pipeline-github-actions ]$ bash init.sh
+The init.sh file does the following tasks:
+
+Creates a new Azure resource group.
+Creates a new AKS cluster and sets up Kubectl to access it.
+Creates a new Container Registry repository and links it to your AKS cluster.
+Sets up the environment variables AKS_NAME, DNS_NAME, RESOURCE_GROUP_NAME, and ACR_NAME.
+
+#### Set the secrets 
+github new repo secrets 
