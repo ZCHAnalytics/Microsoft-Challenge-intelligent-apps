@@ -85,9 +85,6 @@ We then add data:
 
 and clean up after exercise/
 
-## Monitor GitHub events by using a webhook with Azure Functions
-
-## AKS deployment pipeline with GitHub Actions
 
 ## Code with GitHub Codespaces 
 
