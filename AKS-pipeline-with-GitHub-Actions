@@ -10,58 +10,20 @@ Check the results:
 `az acr list -o table`
 
 Environmental variables - GitHub Secrets for Actions
-ACR Name:  `$ az acr list --query "[?contains(resourceGroup, 'mslearn-gh-pipelines')].loginServer" -o table`
+`$ az acr list --query "[?contains(resourceGroup, 'mslearn-gh-pipelines')].loginServer" -o table`
 
 We create a new workflow in GitHub Actions, using templates from the marketplaces for designing steps - checkout, login. etc and commit changes.
 This run will fail because no variables have been set in GitHub Secrets yet. 
 
 Adding GitHub Secrets: 
-
 Re-run did not work the first time due to older versions of node.js and nginx specified in the dockerfile. I changed the versions to latest and it worked! 
 
-We design a CI/CD pipeline and want the Contoso Video website to be published in AKS after each successful push to the main branch that's tagged for release to production.
-The tagging design makes it easy to check the version of each deployment that goes to production.
-We also want to deploy the website to a staging environment for testing after every push to the main branch, regardless of whether the push is tagged for release to production. 
-
-Triggers - pipeline needs to trigger on two different events:
-- A tagged push to the main branch.
-- A nontagged push to the main branch.
-
-You split the two events into two separate triggers, because the actions for a tagged push are different from the actions for a nontagged push. A tagged push deploys to production, while a nontagged push deploys to the staging environment. The following diagram shows the two triggers for the pipeline:
-Exercise 1  - Build the application image
 We create  GitHub Actions staging pipeline by building the application image and pushing it to Azure Container Registry.
 https://learn.microsoft.com/en-us/training/modules/aks-deployment-pipeline-github-actions/media/3-pipeline-5-deploy.png
 
-- Create the GitHub Actions workflow.
-- Create the on push trigger.
-- Build and push the application image.
-- Set secrets.
-- Run the job.
-
-In order to run in the AKS environment, the website must be a Docker image. the Dockerfile that's in the root of the repository. For the tagged commit pipeline, you build the image and then tag it by using the same tag as the push. 
-e.g. if the commit is tagged with v1.0.0, you build the image as contoso/website:v1.0.0. 
-If you have a nontagged commit in the main branch, you build the image with the latest tag.
-
-After the image is built, you push it to the Contoso container registry, and you set up the AKS cluster to access the registry. The cluster downloads the images from Container Registry and runs them.
-
-At this point, the pipeline converges into a single step. Your Container Registry instance doesn't have internal divisions, so you push both images to the same place.
+Build-production.yml
 
 
-The final deploy step deploys the website to the correct location. If a tagged commit triggered the pipeline, you deploy the website to the production namespace of the AKS cluster. If the pipeline was triggered with a nontagged commit, you push to the staging namespace of the same cluster.
-
-https://learn.microsoft.com/en-gb/training/modules/aks-deployment-pipeline-github-actions/media/3-pipeline-5-deploy.png
-
-### Fork repo and clone in Azure portal:
-git clone https://github.com/zchanalytics/aks-deployment-pipeline-github-actions
-
-zulfia [ ~ ]$ cd aks-deployment-pipeline-github-actions
-zulfia [ ~/aks-deployment-pipeline-github-actions ]$ bash init.sh
-The init.sh file does the following tasks:
-
-Creates a new Azure resource group.
-Creates a new AKS cluster and sets up Kubectl to access it.
-Creates a new Container Registry repository and links it to your AKS cluster.
-Sets up the environment variables AKS_NAME, DNS_NAME, RESOURCE_GROUP_NAME, and ACR_NAME.
-
-#### Set the secrets 
-github new repo secrets 
+trigger tag event - git pull
+git tag -a v2.0.0 -m 'My first tag'
+git push --tags
