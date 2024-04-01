@@ -9,15 +9,26 @@ Triggers
 Your pipeline needs to trigger on two different events:
 - A tagged push to the main branch.
 - A nontagged push to the main branch.
+In this exercise, you:
+
+Build the Actions workflow.
+Create the on tag trigger.
+Build and push the production image.
+Generate a personal access token (PAT).
+Trigger the tag event.
 You split the two events into two separate triggers, because the actions for a tagged push are different from the actions for a nontagged push. A tagged push deploys to production, while a nontagged push deploys to the staging environment. The following diagram shows the two triggers for the pipeline:
+
 Step 1: Clone the repo
+
 The first steps are the build steps, where you prepare a configuration and build the image before you push it to the AKS cluster. In the build steps, you set up all the information needed for the deploy step. In this case, the first build step after receiving the trigger signal is the same for both triggers, to clone the repository.
 
 Step 2: Build the image
+
 In order to run in the AKS environment, the website must be a Docker image. 
 the Dockerfile that's in the root of the repository. For the tagged commit pipeline, you build the image and then tag it by using the same tag as the push. 
 e.g. if the commit is tagged with v1.0.0, you build the image as contoso/website:v1.0.0. 
 If you have a nontagged commit in the main branch, you build the image with the latest tag.
+
 Step 3: Push the image to a container registry
 After the image is built, you push it to the Contoso container registry, and you set up the AKS cluster to access the registry. The cluster downloads the images from Container Registry and runs them.
 
