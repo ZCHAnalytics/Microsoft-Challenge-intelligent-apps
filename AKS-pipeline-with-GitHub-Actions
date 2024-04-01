@@ -1,23 +1,23 @@
 ## AKS deployment pipeline with GitHub Actions
-Contoso Video, a video production company whose technology stack has migrated to AKS. To reduce your team's time and effort building container images and deploying applications, you want to investigate using pipelines to deploy AKS workloads.
-
-We create a proof of concept by using the Contoso Video website.
+Scenario: 
+A video production company migrated its technology stack to AKS. 
+To reduce time and effort building container images and deploying applications, we investigate using pipelines to deploy AKS workloads.
 
 0. Set up Project Environment:
-Azure cloud shell, clone the GitHub Repo and run init.sh to creat a new resource group, new AKS cluster with Kubectl to access it, new Container Registry repository and links it to the AKS cluster and sets up the environment variables.  
-
-zulfia [ ~/aks-deployment-pipeline-github-actions ]$ bash init.sh
+In the terminal, clone the GitHub Repo and inside it, run the init.sh file. I  modified the template to ensure all resources are created int he same region as first they were created in West Europe and East US.  
 Check the results: 
 `az group list -o table` 
 `az acr list -o table`
 
--> Resource Group Name: mslearn-gh-pipelines-25555
--> ACR Name: contosocontainerregistry8587
--> ACR Login Username: xxx
--> ACR Password: xxx
--> AKS Cluster Name: contosocontainerregistry8587
--> AKS DNS Zone Name: 56abe96290fb4ca4bb39.eastus.aksapp.io
+Environmental variables - GitHub Secrets for Actions
+ACR Name:  `$ az acr list --query "[?contains(resourceGroup, 'mslearn-gh-pipelines')].loginServer" -o table`
 
+We create a new workflow in GitHub Actions, using templates from the marketplaces for designing steps - checkout, login. etc and commit changes.
+This run will fail because no variables have been set in GitHub Secrets yet. 
+
+Adding GitHub Secrets: 
+
+Re-run did not work the first time due to older versions of node.js and nginx specified in the dockerfile. I changed the versions to latest and it worked! 
 
 We design a CI/CD pipeline and want the Contoso Video website to be published in AKS after each successful push to the main branch that's tagged for release to production.
 The tagging design makes it easy to check the version of each deployment that goes to production.
