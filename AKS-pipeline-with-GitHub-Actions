@@ -1,39 +1,52 @@
 ## AKS deployment pipeline with GitHub Actions
 Contoso Video, a video production company whose technology stack has migrated to AKS. To reduce your team's time and effort building container images and deploying applications, you want to investigate using pipelines to deploy AKS workloads.
 
-In this module, you learn how to create a continuous integration and continuous delivery (CI/CD) pipeline that uses GitHub Actions to deploy Kubernetes workloads to an AKS cluster. You create a proof of concept by using the Contoso Video website.
-In this unit, you design a CI/CD pipeline to support the needs of your project. You want the Contoso Video website to be published in Azure Kubernetes Service (AKS) after each successful push to the main branch that's tagged for release to production. The tagging design makes it easy to check the version of each deployment that goes to production.
+We create a proof of concept by using the Contoso Video website.
 
-You also want to deploy the website to a staging environment for testing after every push to the main branch, regardless of whether the push is tagged for release to production. You can use tags for routing different container images when you push them to Azure Container Registry.
-Triggers
-Your pipeline needs to trigger on two different events:
+0. Set up Project Environment:
+Azure cloud shell, clone the GitHub Repo and run init.sh to creat a new resource group, new AKS cluster with Kubectl to access it, new Container Registry repository and links it to the AKS cluster and sets up the environment variables.  
+
+zulfia [ ~/aks-deployment-pipeline-github-actions ]$ bash init.sh
+Check the results: 
+`az group list -o table` 
+`az acr list -o table`
+
+-> Resource Group Name: mslearn-gh-pipelines-25555
+-> ACR Name: contosocontainerregistry8587
+-> ACR Login Username: xxx
+-> ACR Password: xxx
+-> AKS Cluster Name: contosocontainerregistry8587
+-> AKS DNS Zone Name: 56abe96290fb4ca4bb39.eastus.aksapp.io
+
+
+We design a CI/CD pipeline and want the Contoso Video website to be published in AKS after each successful push to the main branch that's tagged for release to production.
+The tagging design makes it easy to check the version of each deployment that goes to production.
+We also want to deploy the website to a staging environment for testing after every push to the main branch, regardless of whether the push is tagged for release to production. 
+
+Triggers - pipeline needs to trigger on two different events:
 - A tagged push to the main branch.
 - A nontagged push to the main branch.
-In this exercise, you:
 
-Build the Actions workflow.
-Create the on tag trigger.
-Build and push the production image.
-Generate a personal access token (PAT).
-Trigger the tag event.
 You split the two events into two separate triggers, because the actions for a tagged push are different from the actions for a nontagged push. A tagged push deploys to production, while a nontagged push deploys to the staging environment. The following diagram shows the two triggers for the pipeline:
+Exercise 1  - Build the application image
+We create  GitHub Actions staging pipeline by building the application image and pushing it to Azure Container Registry.
+https://learn.microsoft.com/en-us/training/modules/aks-deployment-pipeline-github-actions/media/3-pipeline-5-deploy.png
 
-Step 1: Clone the repo
+- Create the GitHub Actions workflow.
+- Create the on push trigger.
+- Build and push the application image.
+- Set secrets.
+- Run the job.
 
-The first steps are the build steps, where you prepare a configuration and build the image before you push it to the AKS cluster. In the build steps, you set up all the information needed for the deploy step. In this case, the first build step after receiving the trigger signal is the same for both triggers, to clone the repository.
-
-Step 2: Build the image
-
-In order to run in the AKS environment, the website must be a Docker image. 
-the Dockerfile that's in the root of the repository. For the tagged commit pipeline, you build the image and then tag it by using the same tag as the push. 
+In order to run in the AKS environment, the website must be a Docker image. the Dockerfile that's in the root of the repository. For the tagged commit pipeline, you build the image and then tag it by using the same tag as the push. 
 e.g. if the commit is tagged with v1.0.0, you build the image as contoso/website:v1.0.0. 
 If you have a nontagged commit in the main branch, you build the image with the latest tag.
 
-Step 3: Push the image to a container registry
 After the image is built, you push it to the Contoso container registry, and you set up the AKS cluster to access the registry. The cluster downloads the images from Container Registry and runs them.
 
 At this point, the pipeline converges into a single step. Your Container Registry instance doesn't have internal divisions, so you push both images to the same place.
-Step 4: Deploy the application
+
+
 The final deploy step deploys the website to the correct location. If a tagged commit triggered the pipeline, you deploy the website to the production namespace of the AKS cluster. If the pipeline was triggered with a nontagged commit, you push to the staging namespace of the same cluster.
 
 https://learn.microsoft.com/en-gb/training/modules/aks-deployment-pipeline-github-actions/media/3-pipeline-5-deploy.png
