@@ -1,0 +1,23 @@
+### Create a chart.
+cd kubernetes
+helm create contoso-website
+cd contoso-website
+rm -r charts templates
+mkdir templates
+mv ../*.yaml ./templates
+
+  
+### Configure the chart.
+  cd ../..
+  code .
+  save yaml.file 
+### Create a deployment
+deployment.yaml
+add variable scope to values.yaml file  
+  
+Create an empty YAML file.
+Add contents to the YAML file.
+### Create a service.
+
+### Create an ingress.
+### Create a DNS zone name.
