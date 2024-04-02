@@ -35,7 +35,7 @@ az aks update \
     --resource-group $RESOURCE_GROUP_NAME \
     --attach-acr $ACR_NAME
 
-export DNS_NAME=$(az network dns zone list -o json --query "[?contains(resourceGroup,'$RESOURCE_GROUP_NAME')].name" -o tsv)
+export DNS_NAME=$(az network dns zone list --query "[?contains(resourceGroup,'$RESOURCE_GROUP_NAME')].name" -o tsv)
 
 sed -i '' 's+!IMAGE!+'"$ACR_NAME"'/contoso-website+g' kubernetes/deployment.yaml
 sed -i '' 's+!DNS!+'"$DNS_NAME"'+g' kubernetes/ingress.yaml
