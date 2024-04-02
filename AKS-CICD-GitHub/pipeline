@@ -1,10 +1,12 @@
 ## AKS deployment pipeline with GitHub Actions
-Scenario: 
-A video production company migrated its technology stack to AKS. 
-To reduce time and effort building container images and deploying applications, we investigate using pipelines to deploy AKS workloads.
+Scenario:  A video production company migrated its technology stack to AKS. To reduce time and effort building container images and deploying applications, we investigate using pipelines to deploy AKS workloads.
+
+I need to design a pipeline that needs to trigger on two different events: 1) a tagged push to the main branch (to production) and 2) a non-tagged push to the main branch (to staging environment).
 
 0. Set up Project Environment:
-In the terminal, clone the GitHub Repo and inside it, run the init.sh file. I  modified the template to ensure all resources are created int he same region as first they were created in West Europe and East US.  
+In the terminal, clone the GitHub Repo and inside it, run the init.sh file. 
+I  modified the template to ensure all resources are created int he same region as first they were created in West Europe and East US.  
+
 Check the results: 
 `az group list -o table` 
 `az acr list -o table`
