@@ -56,3 +56,12 @@ A pod wraps one or more containers. All pods have a specification section that a
   selector: # Define the wrapping strategy
     matchLabels: # Match all pods with the defined labels
       app: contoso-website # Labels follow the `name: value` template
+### apply the manifest
+In Cloud Shell, run the kubectl apply command to submit the deployment manifest to cluster.
+kubectl apply -f ./deployment.yaml
+Run the kubectl get deploy command to check if the deployment was successful.
+kubectl get deploy contoso-website
+Run the kubectl get pods command to check if the pod is running.
+kubectl get pods
+
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/f7b92e0a-36dd-4267-8f23-04bd48821027)
