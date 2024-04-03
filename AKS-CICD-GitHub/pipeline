@@ -3,10 +3,14 @@ Scenario:  A video production company migrated its technology stack to AKS. To r
 
 I need to design a pipeline that needs to trigger on two different events: 1) a tagged push to the main branch (to production) and 2) a non-tagged push to the main branch (to staging environment).
 clone repo > build image > push to acr > deploy app > 
+
 ### 0. Set up Project Environment:
 In the terminal, clone the GitHub Repo and inside it, run the init.sh file. 
-The bash file did not specify the regions for all resources and also had both json and tsv for output flags. in sed commands it also had empty strings. So at first attempt, the resouruces were created across different in regions. Also, DNS zone were not created. 
+The bash file did not specify the regions for all resources and also had both json and tsv for output flags. in sed commands it also had empty strings. So at first attempt, the resources were created across different in regions. Also, DNS zone were not created. 
+I also changed the export of the DNS variable:
+export DNS_NAME=$(az aks show -g $RESOURCE_GROUP_NAME -n $AKS_NAME --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)
 DNS_NAME variable was not given a value.
+
 The Dockerfile needed to be updated as well as nginx, node.js and hugo versions were out of date.
 
 OLD: `export DNS_NAME=$(az network dns zone list -o json --query "[?contains(resourceGroup,'$RESOURCE_GROUP_NAME')].name" -o tsv)`
@@ -15,20 +19,25 @@ I got these outputs which i will use as variable but these resources will be del
 As kubernetes yaml files have not been yet created, the sed commands could not be executed:
 `sed: can't read kubernetes/deployment.yaml: No such file or directory
 sed: can't read kubernetes/ingress.yaml: No such file or directory
-Installation concluded, copy these values and store them, you'll use them later in this exercise:
--> Resource Group Name: mslearn-gh-pipelines-2970
--> ACR Name: contosocontainerregistry25431
--> ACR Login Username: contosocontainerregistry25431
--> ACR Password: XXXX
--> AKS Cluster Name: contosocontainerregistry25431
--> AKS DNS Zone Name: 18bebe5a3ab943899607.uksouth.aksapp.io`
 
-Check the results: 
-`az group list -o table` shows all resources are in the same region and status 'succeeded'
-`az acr list -o table` shows that Azure Container Registry has also been created. 
+Checking the results with `az group list -o table` shows that all resources are now in the same region and status is 'succeeded'. The command `az acr list -o table` shows that Azure Container Registry has also been created. 
+
+$ az group list -o table
+Name                                                 Location    Status
+---------------------------------------------------  ----------  ---------
+NetworkWatcherRG                                     uksouth     Succeeded
+mslearn-gh-pipelines-19117                           uksouth     Succeeded
+MC_mslearn-gh-pipelines-19117_contoso-video_uksouth  uksouth     Succeeded
+cloud-shell-storage-westeurope                       westeurope  Succeeded
+
+$ az acr list -o table
+NAME                           RESOURCE GROUP              LOCATION    SKU    LOGIN SERVER                              CREATION DATE         ADMIN ENABLED
+-----------------------------  --------------------------  ----------  -----  ----------------------------------------  --------------------  ---------------
+contosocontainerregistry29748  mslearn-gh-pipelines-19117  uksouth     Basic  contosocontainerregistry29748.azurecr.io  2024-04-03T19:15:37Z  True
 
 ### 1. Design staging pipeline
-I create a pipeline by adding a new GitHub Actions workflow, with `on push` trigger, with environmental variables.  
+Now we create a pipeline by adding a new GitHub Actions workflow with file `build-staging.yml` and commit changes. The run failed because we haven't set up environmental variables as secrets in GitHub Actions yet.
+
 Environmental variables - GitHub Secrets for Actions
 `$ az acr list --query "[?contains(resourceGroup, 'mslearn-gh-pipelines')].loginServer" -o table`
 
