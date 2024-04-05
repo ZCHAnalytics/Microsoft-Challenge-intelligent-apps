@@ -6,6 +6,7 @@ I need one pipeline for development and another one for production that are trig
 
 1) a tagged push to the main branch (to production) 
 2) a non-tagged push to the main branch (to staging environment).
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/51427827-6afd-400e-85c0-1c160d94322b)
 
 ### 0. Set up Project Environment in Azure Cloud shell:
 Clone the GitHub Repo and inside it, run the init.sh file. The bash file did not specify the regions for all resources. So at first attempt, the resources were created across the globe. So I edited the file. 
