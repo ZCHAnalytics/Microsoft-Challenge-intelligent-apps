@@ -15,18 +15,8 @@ The Dockerfile needed to be updated as well as nginx, node.js and hugo versions 
 Checking the results with `az group list -o table` shows that all resources are now in the same region and status is 'succeeded'. 
 The command `az acr list -o table` shows that Azure Container Registry is now live and kicking.
 
-$ az group list -o table
-Name                                                 Location    Status
----------------------------------------------------  ----------  ---------
-NetworkWatcherRG                                     uksouth     Succeeded
-mslearn-gh-pipelines-19117                           uksouth     Succeeded
-MC_mslearn-gh-pipelines-19117_contoso-video_uksouth  uksouth     Succeeded
-cloud-shell-storage-westeurope                       westeurope  Succeeded
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/bfc2366a-1337-4006-b91f-5427316ac97e)
 
-$ az acr list -o table
-NAME                           RESOURCE GROUP              LOCATION    SKU    LOGIN SERVER                              CREATION DATE         ADMIN ENABLED
------------------------------  --------------------------  ----------  -----  ----------------------------------------  --------------------  ---------------
-contosocontainerregistry29748  mslearn-gh-pipelines-19117  uksouth     Basic  contosocontainerregistry29748.azurecr.io  2024-04-03T19:15:37Z  True
 
 ### 1. Design a Staging Pipeline
 Now I create a pipeline by adding a new GitHub Actions workflow with file `build-staging.yml` and commit changes. 
