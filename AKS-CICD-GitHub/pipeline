@@ -1,14 +1,19 @@
-## AKS deployment pipeline with GitHub Actions
+# AKS deployment pipeline with GitHub Actions
+
 Scenario:  A video production company migrated its technology stack to AKS. To reduce time and effort building container images and deploying applications, we investigate using pipelines to deploy AKS workloads.
 
-I need to design a pipeline that needs to trigger on two different events: 1) a tagged push to the main branch (to production) and 2) a non-tagged push to the main branch (to staging environment).
-clone repo > build image > push to acr > deploy app > 
+I need to design a pipeline that needs to trigger on two different events: 
+
+1) a tagged push to the main branch (to production) 
+
+2) a non-tagged push to the main branch (to staging environment).
 
 ### 0. Set up Project Environment:
-In the terminal, clone the GitHub Repo and inside it, run the init.sh file. The bash file did not specify the regions for all resources. So at first attempt, the resources were created across different in regions. 
-The Dockerfile needed to be updated as well as nginx, node.js and hugo versions were out of date.
+In the terminal, clone the GitHub Repo and inside it, run the init.sh file. The bash file did not specify the regions for all resources. So at first attempt, the resources were created across the globe. 
+The Dockerfile needed to be updated as well as nginx, node.js and hugo versions and/or links were out of date.
 
-Checking the results with `az group list -o table` shows that all resources are now in the same region and status is 'succeeded'. The command `az acr list -o table` shows that Azure Container Registry has also been created. 
+Checking the results with `az group list -o table` shows that all resources are now in the same region and status is 'succeeded'. 
+The command `az acr list -o table` shows that Azure Container Registry is now live and kicking.
 
 $ az group list -o table
 Name                                                 Location    Status
@@ -23,23 +28,47 @@ NAME                           RESOURCE GROUP              LOCATION    SKU    LO
 -----------------------------  --------------------------  ----------  -----  ----------------------------------------  --------------------  ---------------
 contosocontainerregistry29748  mslearn-gh-pipelines-19117  uksouth     Basic  contosocontainerregistry29748.azurecr.io  2024-04-03T19:15:37Z  True
 
-### 1. Design staging pipeline
-Now we create a pipeline by adding a new GitHub Actions workflow with file `build-staging.yml` and commit changes. The run failed because we haven't set up environmental variables as secrets in GitHub Actions yet.
+### 1. Design a Staging Pipeline
+Now I create a pipeline by adding a new GitHub Actions workflow with file `build-staging.yml` and commit changes. 
+The run failed because the environmental variables are not added to GitHub Actions, which I will do straight away.
 
-`$ az acr list --query "[?contains(resourceGroup, 'mslearn-gh-pipelines')].loginServer" -o table`
-I added them now: 
-
-We create a new workflow in GitHub Actions, using templates from the marketplaces for designing steps - checkout, login. etc and commit changes.
-This run will fail because no variables have been set in GitHub Secrets yet. 
-
-Adding GitHub Secrets: 
-
-We create  GitHub Actions staging pipeline by building the application image and pushing it to Azure Container Registry.
+Now i Have a GitHub Actions staging pipeline that builds an application image and pushes it to Azure Container Registry.
 https://learn.microsoft.com/en-us/training/modules/aks-deployment-pipeline-github-actions/media/3-pipeline-5-deploy.png
 
-Build-production.yml
+### 2. Design production pipeline 
 
+See - Build-production.yaml
 
 trigger tag event - git pull
 git tag -a v2.0.0 -m 'My first tag'
 git push --tags
+
+### 3. Helm Chart
+- Generate a boilerplate Helm template in the kubernetes directory of the repository.
+- Configure the Chart.yaml
+- Configure the deployment.yaml file in the kubernetes/templates folder.
+- Add content to the values.yaml file (inc dns zone)
+- Configure the service.yaml file in the templates folder.
+- Configure the ingress.yaml file 
+
+### 4. Create the deployment pipeline for staging
+- add deploy job to  build-staging.yaml
+- Add the Install Helm step
+- Add the Azure Login authentication step
+- Set up Open ID Connect (OIDC) - Set the secrets in Github Actions
+- Add federated credentials in azure portal Add federated credentials
+- Add the Run Helm Deploy step
+- Set the DNS_NAME secret
+- Commit the changes and test the staging deployment
+
+AlLl done!
+
+### 5. Run the deployment on production
+- build-production.yaml
+- Production changes - azure portal - update the federated certificate with the corresponding tag version - increment the tag number to a new v.x.x.x such as v.2.0.1
+`git tag -a v2.0.1 -m 'Create new production deployment' && git push --tags`
+
+Check: After the workflow succeeds, to test the production deployment, go to contoso-production.<aks-dns-zone-name> in your browser and confirm that the website appears.
+
+
+### 6. Clean up the resources after tesintg or there will be an unexpectyed bill!
