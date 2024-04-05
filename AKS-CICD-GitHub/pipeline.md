@@ -2,14 +2,13 @@
 
 Scenario:  A video production company migrated its technology stack to AKS. To reduce time and effort building container images and deploying applications, we investigate using pipelines to deploy AKS workloads.
 
-I need to design a pipeline that needs to trigger on two different events: 
+I need one pipeline for development and another one for production that are triggered by different events. 
 
 1) a tagged push to the main branch (to production) 
-
 2) a non-tagged push to the main branch (to staging environment).
 
-### 0. Set up Project Environment:
-In the terminal, clone the GitHub Repo and inside it, run the init.sh file. The bash file did not specify the regions for all resources. So at first attempt, the resources were created across the globe. 
+### 0. Set up Project Environment in Azure Cloud shell:
+Clone the GitHub Repo and inside it, run the init.sh file. The bash file did not specify the regions for all resources. So at first attempt, the resources were created across the globe. So I edited the file. 
 The Dockerfile needed to be updated as well as nginx, node.js and hugo versions and/or links were out of date.
 
 Checking the results with `az group list -o table` shows that all resources are now in the same region and status is 'succeeded'. 
@@ -19,19 +18,16 @@ The command `az acr list -o table` shows that Azure Container Registry is now li
 
 
 ### 1. Design a Staging Pipeline
-Now I create a pipeline by adding a new GitHub Actions workflow with file `build-staging.yml` and commit changes. 
-The run failed because the environmental variables are not added to GitHub Actions, which I will do straight away.
+Now I create a pipeline by adding a new GitHub Actions workflow with file `build-staging.yml` and commit changes. The run failed because the environmental variables are not added to GitHub Actions, which I will do straight away.
 ![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/53325f9e-7923-4bea-91e2-43e0fa3afa38)
 
-Now i Have a GitHub Actions staging pipeline that builds an application image and pushes it to Azure Container Registry.
+Now we have a GitHub Actions staging pipeline that builds an application image and pushes it to Azure Container Registry.
 https://learn.microsoft.com/en-us/training/modules/aks-deployment-pipeline-github-actions/media/3-pipeline-5-deploy.png
+
 ![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/5e554141-a288-4f56-9e0a-b6536f22a537)
 
 ### 2. Design production pipeline 
-
-See - Build-production.yaml
-
-trigger tag event - git pull
+We configure a new workflow in `build-production.yaml` file. 
 
 ![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/5a9e53f6-0feb-406b-b2dd-b0d6b8414c17)
 
@@ -58,8 +54,8 @@ Check:
 - Configure the service.yaml file in the templates folder.
 - Configure the ingress.yaml file 
 
-### 4. Create the deployment pipeline for staging
-- add deploy job to  build-staging.yaml
+### 4. Add deployment job to the staging pipeline
+- Add deploy job to build-staging.yaml
 - Add the Install Helm step
 - Add the Azure Login authentication step
 - Set up Open ID Connect (OIDC) - `az ad sp create-for-rbac --scopes /subscriptions/$SUBSCRIPTION_ID --role Contributor` - Set the secrets in Github Actions
@@ -70,7 +66,6 @@ Check:
 - ![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/f551d016-0493-4690-9401-fcf8dbff76be)
 
 - Add the Run Helm Deploy step
-- Set the DNS_NAME secret
 - Commit the changes and test the staging deployment
 
 AlLl done!
@@ -83,4 +78,4 @@ AlLl done!
 Check: After the workflow succeeds, to test the production deployment, go to contoso-production.<aks-dns-zone-name> in your browser and confirm that the website appears.
 
 
-### 6. Clean up the resources after tesintg or there will be an unexpectyed bill!
+### 6. Clean up the resources after testing the workflows or there will be an unexpectyed bill!
