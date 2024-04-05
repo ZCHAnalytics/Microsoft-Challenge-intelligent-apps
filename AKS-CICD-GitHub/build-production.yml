@@ -1,34 +1,74 @@
 name: Build and push the tagged build to production
 
-on:
-  push:
-    tags:
+on: # create the 'on' tag trigger 
+  push: 
+    tags: 
       - 'v*'
 
 jobs:
-  build_push_image:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v2
-
+  build_push_image: 
+    runs-on: ubuntu-22.04 # ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v4.1.2 # Configure the checkout step
+      
       - name: Fetch latest version
         id: fetch_version
         run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
-
+      
       - name: Set up Buildx
-        uses: docker/setup-buildx-action@v3.2.0
-
-      - name: Docker Login
+        uses: docker/setup-buildx-action@v3.2.0 #v3.0.0 
+        
+      - name: Docker login
         uses: docker/login-action@v3.1.0
         with:
           registry: ${{ secrets.ACR_NAME }}
           username: ${{ secrets.ACR_LOGIN }}
           password: ${{ secrets.ACR_PASSWORD }}
-
+          
       - name: Build and push production images
         uses: docker/build-push-action@v5.3.0
-        with:
+        with: 
           context: .
-          tags: ${{secrets.ACR_NAME}}/contoso-website:latest,${{secrets.ACR_NAME}}/contoso-website:${{ steps.fetch_version.outputs.TAG }}
           push: true
+          tags: ${{ secrets.ACR_NAME }}/contoso-website:latest,${{ secrets.ACR_NAME }}/contoso-website:${{ steps.fetch_version.outputs.TAG }}
+    
+  deploy:
+    runs-on: ubuntu-22.04
+    needs: build_push_image
+    permissions:
+      id-token: write
+      contents: read
+    
+    steps:
+      - uses: actions/checkout@v2
+      
+      - name: Install Helm
+        uses: Azure/setup-helm@v4
+        with: 
+          version: latest
+        
+      - name: Sign in to Azure with OIDC
+        uses: Azure/login@v2.0.0
+        with: 
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Azure Kubernetes set context
+        uses: Azure/aks-set-context@v3
+        with:
+          resource-group: ${{ secrets.RESOURCE_GROUP }}
+          cluster-name: ${{ secrets.CLUSTER_NAME }}     
+          
+      - name: Run Helm Deploy
+        run: |
+          helm upgrade \
+            --install \
+            --create-namespace \
+            --atomic \
+            --wait \
+            --namespace production contoso-website \
+            ./kubernetes/contoso-website \
+            --set image.repository=${{ secrets.ACR_NAME }} \
+            --set dns.name=${{ secrets.DNS_NAME }}
+            --set image.tag=${GITHUB_REF##*/}
