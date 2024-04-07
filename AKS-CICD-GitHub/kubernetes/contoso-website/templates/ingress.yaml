@@ -3,10 +3,15 @@ kind: Ingress
 metadata:
   name: contoso-website
   namespace: {{ default "staging" .Release.Namespace }}
+# Remove annotation
+#   annotations:
+#    kubernetes.io/ingress.class: addon-http-application-routing
+# add ingress class name 
+
 spec:
-  ingressClassName: addon-http-application-routing
+  ingressClassName: webapprouting.kubernetes.azure.com
   rules:
-    - host: contoso-{{ default "staging" .Release.Namespace }}.{{ .Values.dns.name }}
+    - host: contoso-{{ default "staging" .Release.Namespace }}.3244ce9946374fdb9bac.uksouth.aksapp.io # Replace {{ .Values.dns.name}}
       http:
         paths:
           - backend:
@@ -15,4 +20,4 @@ spec:
                 port:
                   name: http
             path: /
-            pathType: Prefix
+            pathType: Prefix   
