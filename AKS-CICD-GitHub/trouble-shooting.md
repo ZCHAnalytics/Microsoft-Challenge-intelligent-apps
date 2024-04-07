@@ -9,18 +9,20 @@ in `az aks create` I specify the region to be the same as in resource group:
 
 1.2. The later steps create the filepath for kubernetes file which are missing from the init.sh, so I correct them just in case it will cause any issues later:
 
-# These commands are not needed as values are created in values.yaml file 
-# sed -i '' 's+!IMAGE!+'"$ACR_NAME"'/contoso-website+g' kubernetes/deployment.yaml
-# sed -i '' 's+!DNS!+'"$DNS_NAME"'+g' kubernetes/ingress.yaml
+These commands are not needed as values are created in values.yaml file 
+sed -i '' 's+!IMAGE!+'"$ACR_NAME"'/contoso-website+g' kubernetes/deployment.yaml
+sed -i '' 's+!DNS!+'"$DNS_NAME"'+g' kubernetes/ingress.yaml
 
 
 echo "Installation concluded, copy these values and store them, you'll use them later in this exercise:"
 echo "-> Resource Group Name: $RESOURCE_GROUP_NAME"
-# echo "-> ACR Name: $ACR_NAME"
+echo "-> ACR Name: $ACR_NAME"
+
 echo "-> ACR Name: $ACR_NAME.azurecr.io" # append `.azurecr.io` to ACR_NAME
 echo "-> ACR Login Username: $ACR_USERNAME"
 echo "-> ACR Password: $ACR_PASSWORD"
-# Change incorrect name ACR_NAME to AKS_NAME
+
+Change incorrect name ACR_NAME to AKS_NAME
 echo "-> AKS Cluster Name: $AKS_NAME"
 echo "-> AKS DNS Zone Name: $DNS_NAME"
 
@@ -30,7 +32,7 @@ The Dockerfile needed to be updated as well as nginx, node.js and hugo versions 
 Checking the results with az group list -o table shows that all resources are now in the same region and status is 'succeeded'. 
 The command `az acr list -o table` shows that Azure Container Registry is now live and kicking.
 
-![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/59183351-a388-4758-a7ce-519bc61911e4)
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/2f41fec7-ac5b-4abc-aef1-12413cb82dc2)
 
 check
 
