@@ -1,12 +1,14 @@
-FROM nginx:latest
+# Use nginx base image version 1.24.0
+FROM nginx:1.24.0
+
+# Update and install necessary packages
 RUN curl -sL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get update -y \
-    && apt-get install -y \
-    git curl nodejs 
+    && apt-get install -y git curl nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install Hugo 0.124.1
-# RUN curl -sL https://github.com/gohugoio/hugo/releases/download/v0.124.1/hugo_0.124.1_Linux-64bit.tar.gz | tar -xz -C /usr/local/bin hugo
-# Replace standard version with extended
+# Install Hugo 0.124.1 instead of 0.72.0 as weblink is not working
 RUN curl -sL https://github.com/gohugoio/hugo/releases/download/v0.124.1/hugo_extended_0.124.1_Linux-64bit.tar.gz | tar -xz hugo && mv hugo /usr/bin && npm i -g postcss-cli autoprefixer postcss
 
 # Clone the GitHub repository for the website
