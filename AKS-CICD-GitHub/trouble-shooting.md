@@ -56,9 +56,9 @@ UNIT 7 of 11 - production
 build-production.yaml file 
 
 tags
-![image](https://github.com/ZCHAnalytics/mslearn-aks-deployment-pipeline-github-actions/assets/146954022/4d11815d-0996-4e9b-82c1-42f426e46641)
+![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/6e005c46-4e23-4b4a-87ca-bd08ed37f054)
 
-az acr repository show-tags --repository contoso-website --name contosocontainerregistry4284.azurecr.io -o table
+az acr repository show-tags --repository contoso-website --name $ACR_NAME -o table
 
 Another helpful command for troubleshooting: zulfia [ ~/mslearn-aks-deployment-pipeline-github-actions ]$ git ls-remote --tags https://github.com/ZCHAnalytics/mslearn-aks-deployment-pipeline-github-actions.git
 git config --global credential.helper store
