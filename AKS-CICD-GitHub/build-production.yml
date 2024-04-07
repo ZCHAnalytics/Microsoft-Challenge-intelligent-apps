@@ -1,4 +1,4 @@
-name: Build and push the tagged build to production
+ame: Build and push the tagged build to production
 
 on: # create the 'on' tag trigger 
   push: 
@@ -7,7 +7,7 @@ on: # create the 'on' tag trigger
 
 jobs:
   build_push_image: 
-    runs-on: ubuntu-22.04 # ubuntu-latest
+    runs-on: ubuntu-22.04 
     steps: 
       - uses: actions/checkout@v4.1.2 # Configure the checkout step
       
@@ -31,7 +31,8 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.ACR_NAME }}/contoso-website:latest,${{ secrets.ACR_NAME }}/contoso-website:${{ steps.fetch_version.outputs.TAG }}
-    
+  
+   
   deploy:
     runs-on: ubuntu-22.04
     needs: build_push_image
@@ -71,4 +72,4 @@ jobs:
             ./kubernetes/contoso-website \
             --set image.repository=${{ secrets.ACR_NAME }} \
             --set dns.name=${{ secrets.DNS_NAME }}
-            --set image.tag=${GITHUB_REF##*/}
+            --set image.tag=${GITHUB_REF##*/}    
