@@ -9,10 +9,7 @@ I need one pipeline for development and another one for production that are trig
 ![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/51427827-6afd-400e-85c0-1c160d94322b)
 
 ### 0. Set up Project Environment in Azure Cloud shell:
-Clone the GitHub Repo and inside it, run the init.sh file. The bash file did not specify the regions for all resources. So at first attempt, the resources were created across the globe. So I edited the file. 
-The Dockerfile needed to be updated as well as nginx, node.js and hugo versions and/or links were out of date.
-
-Checking the results with `az group list -o table` shows that all resources are now in the same region and status is 'succeeded'. 
+Clone the GitHub Repo and inside it, run the init.sh file. 
 The command `az acr list -o table` shows that Azure Container Registry is now live and kicking.
 
 ![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/bfc2366a-1337-4006-b91f-5427316ac97e)
