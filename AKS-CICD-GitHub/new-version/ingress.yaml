@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: contoso-website
+  namespace: {{ default "staging" .Release.Namespace }}
+
+spec:
+  ingressClassName: webapprouting.kubernetes.azure.com
+  rules:
+    - host: contoso-{{ default "staging" .Release.Namespace }}.troubleshootingmslearn.io
+      http:
+        paths:
+          - backend:
+              service:
+                name: contoso-website
+                port:
+                  name: http
+            path: /
+            pathType: Prefix  
