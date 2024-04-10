@@ -1,4 +1,4 @@
-![image](https://github.com/ZCHAnalytics/Microsoft-Challenge-intelligent-apps-skills/assets/146954022/2b8f0e2d-4c75-4e21-803a-80ab78d089af)# Microsoft Cloud Skills Challenge - Intelligent Apps Skills 
+# Microsoft Cloud Skills Challenge - Intelligent Apps Skills 
 
 ![image](https://github.com/ZCHAnalytics/Microsoft-Challenge-intelligent-apps-skills/assets/146954022/4cf9dc24-d296-4fa6-adab-8ce9040f1d82)
 
