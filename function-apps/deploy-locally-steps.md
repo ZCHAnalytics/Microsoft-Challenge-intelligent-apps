@@ -1,4 +1,4 @@
-# Create a new escalator function app 
+# Create a new escalator function app with the Core Tools
 
 ![image](https://github.com/ZCHAnalytics/intelligent-apps-AKS-Functions-CosmosDB/assets/146954022/a7856e4d-eb20-4671-8793-d041b3fe15ef)
 
