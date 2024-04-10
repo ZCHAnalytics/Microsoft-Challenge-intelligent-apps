@@ -1,0 +1,11 @@
+{
+	"name": "minigame",
+	"image": "mcr.microsoft.com/vscode/devcontainers/universal:latest",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"GitHub.copilot"
+			]
+		}
+	}
+}
